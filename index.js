@@ -24,8 +24,6 @@ export default (filepath1, filepath2) => {
   });
   const result = ['{', ...resultingLines, '}'];
 
-// console.log(`Current directory: ${process.cwd()}`);
   return result.join('\n');
 }
 
-// console.log(genDiff('FILES/1.json', 'FILES/2.json'));
