@@ -1,0 +1,15 @@
+name: jest
+
+on: [push]
+
+jobs:
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Make Test
+        run: make test
