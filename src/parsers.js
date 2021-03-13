@@ -3,12 +3,14 @@ import path from 'path';
 import yaml from 'js-yaml';
 
 export default (filepath) => {
-  const format = path.extname(filepath);
-  if (format === '.json') {
-    return JSON.parse(fs.readFileSync(filepath, 'utf-8'));
+  const extension = path.extname(filepath);
+  switch (extension) {
+    case '.json':
+      return JSON.parse(fs.readFileSync(filepath, 'utf-8'));
+    case '.yaml':
+    case '.yml':
+      return yaml.load(fs.readFileSync(filepath, 'utf-8'));
+    default:
+      throw new Error(`${extension} is not supported. Only JSON and YAML files can be parsed.`);
   }
-  if (format === '.yml') {
-    return yaml.load(fs.readFileSync(filepath, 'utf-8'));
-  }
-  throw new Error(`${format} is not supported.`);
 };
