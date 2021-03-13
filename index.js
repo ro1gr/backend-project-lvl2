@@ -1,3 +1,3 @@
-import generateDiff from './src/gendiff.js';
+import generateDiff from './src/gen-diff.js';
 
 export default generateDiff;
