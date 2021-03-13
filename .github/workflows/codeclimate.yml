@@ -3,7 +3,7 @@ name: codeclimate
 on: [push]
 
 jobs:
-  eslint:
+  codeclimate check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
