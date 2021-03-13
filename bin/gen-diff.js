@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { Command } from 'commander/esm.mjs';
-import generateDiff from '../index.js';
+import genDiff from '../index.js';
 
 const program = new Command();
 
@@ -11,7 +11,7 @@ program
   .option('-f, --format [type]', 'output format', 'stylish')
   .arguments('<filepath1> <filexpath2>')
   .action((filepath1, filepath2, options) => {
-    const diff = generateDiff(filepath1, filepath2, options.format);
+    const diff = genDiff(filepath1, filepath2, options.format);
     console.log(diff);
   });
 
