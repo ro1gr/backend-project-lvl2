@@ -10,5 +10,5 @@ export default (filepath) => {
   if (format === '.yml') {
     return yaml.load(fs.readFileSync(filepath, 'utf-8'));
   }
-  throw new Error(`${format} not supported.`);
+  throw new Error(`${format} is not supported.`);
 };
