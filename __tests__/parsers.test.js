@@ -11,7 +11,7 @@ const yamlFile = getFixturePath('deep1.yml');
 const jsonData = parseData(jsonFile);
 const yamlData = parseData(yamlFile);
 
-test('parsed data should be object', () => {
+test('parsed data should be an object', () => {
   expect(typeof jsonData).toBe('object');
 });
 test('parsed data should not be null', () => {
