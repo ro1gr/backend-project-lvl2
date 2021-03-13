@@ -10,7 +10,7 @@ const getFixturePath = (filename) => join(__dirname, '..', '__fixtures__', filen
 const json1 = getFixturePath('deep1.json');
 const json2 = getFixturePath('deep2.json');
 const yaml1 = getFixturePath('deep1.yml');
-const yaml2 = getFixturePath('deep2.yml');
+const yaml2 = getFixturePath('deep2.yaml');
 
 const plainDiff = readFileSync(getFixturePath('plain-diff.txt'), 'utf-8');
 

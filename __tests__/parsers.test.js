@@ -6,8 +6,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const getFixturePath = (filename) => join(__dirname, '..', '__fixtures__', filename);
 
-const jsonFile = getFixturePath('deep1.json');
-const yamlFile = getFixturePath('deep1.yml');
+const jsonFile = getFixturePath('deep2.json');
+const yamlFile = getFixturePath('deep2.yaml');
 const jsonData = parseData(jsonFile);
 const yamlData = parseData(yamlFile);
 
