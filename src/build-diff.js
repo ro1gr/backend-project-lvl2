@@ -1,22 +1,11 @@
 import _ from 'lodash';
 import parseData from './parsers.js';
+import determineState from './determine-state.js';
 
 export default (data1, data2) => {
   const initialData = parseData(data1);
   const updatedData = parseData(data2);
 
-  const getState = (value1, value2) => {
-    if (value1 === undefined) {
-      return 'added';
-    }
-    if (value2 === undefined) {
-      return 'removed';
-    }
-    if (!_.isEqual(value1, value2)) {
-      return 'updated';
-    }
-    return 'unchanged';
-  };
   const iter = (currentValue1, currentValue2) => {
     const keys1 = _.keys(currentValue1);
     const keys2 = _.keys(currentValue2);
@@ -29,7 +18,7 @@ export default (data1, data2) => {
       if (_.isObject(initialValue) && _.isObject(updatedValue)) {
         acc[key] = iter(initialValue, updatedValue);
       } else {
-        const state = getState(initialValue, updatedValue);
+        const state = determineState(initialValue, updatedValue);
         const values = [];
         if (state === 'added') {
           values.push({ $added: updatedValue });
