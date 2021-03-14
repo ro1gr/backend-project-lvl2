@@ -1,15 +1,7 @@
 import _ from 'lodash';
+import appendSign from '../append-sign.js';
 
-const appendSign = (indentation, state) => {
-  switch (state) {
-    case '$added':
-      return indentation.slice(2).concat('+ ');
-    case '$removed':
-      return indentation.slice(2).concat('- ');
-    default:
-      return indentation;
-  }
-};
+
 const hasState = (obj) => _.has(obj, '$state');
 const getState = (obj) => _.keys(obj)[0];
 const getValues = (obj) => obj.$values;
