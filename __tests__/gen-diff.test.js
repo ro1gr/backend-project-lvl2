@@ -12,8 +12,6 @@ const json2 = getFixturePath('deep2.json');
 const yaml1 = getFixturePath('deep1.yml');
 const yaml2 = getFixturePath('deep2.yaml');
 
-const plainDiff = readFileSync(getFixturePath('plain-diff.txt'), 'utf-8');
-
 test('generated diff should be a string', () => {
   expect(typeof genDiff(json1, json2, 'stylish')).toBe('string');
   expect(typeof genDiff(json1, json2, 'plain')).toBe('string');
