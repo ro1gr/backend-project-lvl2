@@ -1,37 +1,56 @@
 import _ from 'lodash';
-import appendSign from '../append-sign.js';
-
-
-const hasState = (obj) => _.has(obj, '$state');
-const getState = (obj) => _.keys(obj)[0];
-const getValues = (obj) => obj.$values;
+import appendSign from './append-sign.js';
+import {
+  hasChildren,
+  getChildren,
+  getKey,
+  getState,
+  getValue,
+} from './helpers.js';
 
 export default (diff) => {
   const indentationSpace = ' ';
   const indentationWidth = 4;
 
-  const iter = (currentData, depth) => {
-    if (!_.isObject(currentData)) {
-      return currentData;
+  const iter = (currentValue, depth) => {
+    if (currentValue === null) {
+      return null;
     }
-
+    if (typeof currentValue !== 'object') {
+      return currentValue.toString();
+    }
     const indentationSize = depth * indentationWidth;
     const currentIndentation = indentationSpace.repeat(indentationSize);
     const bracketIndentation = indentationSpace.repeat(indentationSize - indentationWidth);
-    const lines = _.entries(currentData)
-      .reduce((acc, [key, data]) => {
-        if (hasState(data)) {
-          const values = getValues(data);
-          for (const value of values) {
-            const state = getState(value);
-            acc.push(`${appendSign(currentIndentation, state)}${key}: ${iter(value[state], depth + 1)}`);
-          }
-        } else {
-          acc.push(`${currentIndentation}${key}: ${iter(data, depth + 1)}`);
+
+    if (_.isArray(currentValue)) {
+      const lines = currentValue.flatMap((entry) => {
+        const entryKey = getKey(entry);
+        if (hasChildren(entry)) {
+          const children = getChildren(entry);
+          return `${currentIndentation}${entryKey}: ${iter(children, depth + 1)}`;
         }
-        return acc;
-      }, [])
-      .map((line) => line.trimEnd());
+        const entryState = getState(entry);
+        const entryValue = getValue(entry);
+        if (entryState === 'updated') {
+          return [
+            `${appendSign(currentIndentation, 'removed')}${entryKey}: ${iter(entryValue.removed, depth + 1)}`,
+            `${appendSign(currentIndentation, 'added')}${entryKey}: ${iter(entryValue.added, depth + 1)}`,
+          ];
+        }
+        return `${appendSign(currentIndentation, entryState)}${entryKey}: ${iter(entryValue[entryState], depth + 1)}`;
+      })
+        .map((line) => line.trimEnd());
+
+      return [
+        '{',
+        ...lines,
+        `${bracketIndentation}}`,
+      ].join('\n');
+    }
+
+    const lines = _.entries(currentValue)
+      .map(([key, val]) => `${currentIndentation}${key}: ${iter(val, depth + 1)}`);
 
     return [
       '{',

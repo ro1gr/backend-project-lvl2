@@ -1,8 +1,8 @@
 export default (indentation, state) => {
   switch (state) {
-    case '$added':
+    case 'added':
       return indentation.slice(2).concat('+ ');
-    case '$removed':
+    case 'removed':
       return indentation.slice(2).concat('- ');
     default:
       return indentation;

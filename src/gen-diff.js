@@ -6,4 +6,4 @@ export default (filepath1, filepath2, format) => {
   const formattedDiff = formatDiff(diff, format);
 
   return formattedDiff;
-}
+};

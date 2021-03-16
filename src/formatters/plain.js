@@ -1,54 +1,39 @@
-import _ from 'lodash';
+import {
+  hasChildren,
+  getChildren,
+  getKey,
+  getState,
+  getValue,
+  plainifyValue,
+} from './helpers.js';
 
 export default (diff) => {
-  // const getValue = (data) => data.$values[0].$removed;
-  const getValue = (data) => {
-    const stringifyValue = (value) => {
-      if (value === null) {
-        return null;
-      }
-      if (value === 'true') {
-        return true;
-      }
-      if (value === 'false') {
-        return false;
-      }
-      if (typeof value === 'object') {
-        return '[complex value]';
-      }
-      if (typeof value === 'string') {
-        return `'${value}'`;
-      }
-      return value;
-    };
-
-    const dataState = data.$state;
-    const value = {};
-    if (dataState === 'updated') {
-      value.added = stringifyValue(data.$values[1].$added);
-    }
-    if (dataState === 'added') {
-      value.added = stringifyValue(data.$values[0].$added);
-    }
-    value.removed = stringifyValue(data.$values[0].$removed);
-
-    return value;
-  };
-
   const iter = (currentValue, acc) => {
-    const lines = _.entries(currentValue)
-      .filter(([, val]) => val.$state !== 'unchanged')
-      .flatMap(([key, val]) => {
-        const newAcc = acc ? `${acc}.${key}` : key;
-        switch (val.$state) {
-          case 'added':
-            return `Property '${newAcc}' was added with value: ${getValue(val).added}`;
-          case 'removed':
-            return `Property '${newAcc}' was removed`;
-          case 'updated':
-            return `Property '${newAcc}' was updated. From ${getValue(val).removed} to ${getValue(val).added}`;
+    const lines = currentValue
+      .filter((entry) => getState(entry) !== 'unchanged')
+      .flatMap((entry) => {
+        const entryKey = getKey(entry);
+        const newAcc = acc ? `${acc}.${entryKey}` : entryKey;
+        if (hasChildren(entry)) {
+          const children = getChildren(entry);
+          return `${iter(children, newAcc)}`;
         }
-        return iter(val, newAcc);
+        const entryState = getState(entry);
+        const entryValue = getValue(entry);
+        const lineStart = `Property '${newAcc}' was ${entryState}`;
+        const removedValue = plainifyValue(entryValue.removed);
+        const addedValue = plainifyValue(entryValue.added);
+
+        switch (entryState) {
+          case 'removed':
+            return `${lineStart}`;
+          case 'added':
+            return `${lineStart} with value: ${addedValue}`;
+          case 'updated':
+            return `${lineStart}. From ${removedValue} to ${addedValue}`;
+          default:
+            throw new Error(`${entryState} is not expected. Plain formatter supports only removed, added and updated values.`);
+        }
       });
     return lines.join('\n');
   };
