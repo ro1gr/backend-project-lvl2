@@ -7,29 +7,32 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const getFixturePath = (filename) => join(__dirname, '..', '__fixtures__', filename);
 
-const stylishExample = readFileSync(getFixturePath('diffs/stylish-diff.txt'), 'utf-8');
-const plainExample = readFileSync(getFixturePath('diffs/plain-diff.txt'), 'utf-8');
-const jsonExample = readFileSync(getFixturePath('diffs/json-diff.txt'), 'utf-8');
-const table = [
+const stylishExamplePath = getFixturePath('diffs/stylish-diff.txt');
+const plainExamplePath = getFixturePath('diffs/plain-diff.txt');
+const jsonExamplePath = getFixturePath('diffs/json-diff.txt');
+const stylishExample = readFileSync(stylishExamplePath, 'utf-8');
+const plainExample = readFileSync(plainExamplePath, 'utf-8');
+const jsonExample = readFileSync(jsonExamplePath, 'utf-8');
+
+const cases = [
   ['stylish', stylishExample],
   ['plain', plainExample],
   ['json', jsonExample],
 ];
+const runTests = (table, initialData, updatedData) => {
+  test.each(table)('%s output', (format, example) => {
+    expect(genDiff(initialData, updatedData, format)).toBe(example);
+  });
+};
 
-describe('json diff should work', () => {
+describe('should work with JSON', () => {
   const initialData = getFixturePath('data/deep1.json');
   const updatedData = getFixturePath('data/deep2.json');
-
-  test.each(table)('%s output', (format, example) => {
-    expect(genDiff(initialData, updatedData, format)).toBe(example);
-  });
+  runTests(cases, initialData, updatedData);
 });
 
-describe('yaml diff should work', () => {
+describe('should work with YAML', () => {
   const initialData = getFixturePath('data/deep1.yml');
   const updatedData = getFixturePath('data/deep2.yaml');
-
-  test.each(table)('%s output', (format, example) => {
-    expect(genDiff(initialData, updatedData, format)).toBe(example);
-  });
+  runTests(cases, initialData, updatedData);
 });
