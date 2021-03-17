@@ -14,13 +14,13 @@ const stylishExample = readFileSync(stylishExamplePath, 'utf-8');
 const plainExample = readFileSync(plainExamplePath, 'utf-8');
 const jsonExample = readFileSync(jsonExamplePath, 'utf-8');
 
-const cases = [
-  ['stylish', stylishExample],
-  ['plain', plainExample],
-  ['json', jsonExample],
-];
-const runTests = (table, initialData, updatedData) => {
-  test.each(table)('%s output', (format, example) => {
+const runTests = (initialData, updatedData) => {
+  const cases = [
+    ['stylish', stylishExample],
+    ['plain', plainExample],
+    ['json', jsonExample],
+  ];
+  test.each(cases)('%s output', (format, example) => {
     expect(genDiff(initialData, updatedData, format)).toBe(example);
   });
 };
@@ -28,11 +28,11 @@ const runTests = (table, initialData, updatedData) => {
 describe('should work with JSON', () => {
   const initialData = getFixturePath('data/deep1.json');
   const updatedData = getFixturePath('data/deep2.json');
-  runTests(cases, initialData, updatedData);
+  runTests(initialData, updatedData);
 });
 
 describe('should work with YAML', () => {
   const initialData = getFixturePath('data/deep1.yml');
   const updatedData = getFixturePath('data/deep2.yaml');
-  runTests(cases, initialData, updatedData);
+  runTests(initialData, updatedData);
 });
