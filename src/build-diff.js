@@ -7,7 +7,7 @@ export default (initialData, updatedData) => {
     const initialKeys = Object.keys(currentInitialData);
     const updatedKeys = Object.keys(currentUpdatedData);
     const mergedKeys = _.union(initialKeys, updatedKeys);
-    const sortedKeys = [...mergedKeys].sort();
+    const sortedKeys = _.sortBy(mergedKeys);
 
     return sortedKeys.map((key) => {
       const initialValue = currentInitialData[key];
