@@ -12,17 +12,6 @@ const json2 = getFixturePath('deep2.json');
 const yaml1 = getFixturePath('deep1.yml');
 const yaml2 = getFixturePath('deep2.yaml');
 
-test('generated diff should be a string', () => {
-  expect(typeof genDiff(json1, json2, 'stylish')).toBe('string');
-  expect(typeof genDiff(json1, json2, 'plain')).toBe('string');
-  expect(typeof genDiff(json1, json2, 'json')).toBe('string');
-});
-
-test('should work only with stylish, plain and json output formats', () => {
-  expect(() => genDiff(json1, json2, 'html')).toThrow();
-  expect(() => genDiff(json1, json2, 'txt')).toThrow();
-});
-
 test('should match stylish example', () => {
   const stylishFixture = getFixturePath('stylish-diff.txt');
   const stylishFixtureData = readFileSync(stylishFixture, 'utf-8');
@@ -45,14 +34,4 @@ test('json and yaml diff should be equal', () => {
 
   expect(jsonStylishDiff).toEqual(yamlStylishDiff);
   expect(jsonPlainDiff).toEqual(yamlPlainDiff);
-});
-
-test('mixed json and yaml diff should be equal', () => {
-  const mixedJsonAndYamlStylishDiff1 = genDiff(json1, yaml2, 'stylish');
-  const mixedJsonAndYamlStylishDiff2 = genDiff(yaml1, json2, 'stylish');
-  const mixedJsonAndYamlPlainDiff1 = genDiff(json1, yaml2, 'plain');
-  const mixedJsonAndYamlPlainDiff2 = genDiff(yaml1, json2, 'plain');
-
-  expect(mixedJsonAndYamlStylishDiff1).toEqual(mixedJsonAndYamlStylishDiff2);
-  expect(mixedJsonAndYamlPlainDiff1).toEqual(mixedJsonAndYamlPlainDiff2);
 });
