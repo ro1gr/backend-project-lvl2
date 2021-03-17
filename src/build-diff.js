@@ -14,8 +14,8 @@ export default (initialData, updatedData) => {
       const updatedValue = currentUpdatedData[key];
       const entry = { key };
       if (_.isObject(initialValue) && _.isObject(updatedValue)) {
-        entry.children = iter(initialValue, updatedValue);
-        return entry;
+        const children = iter(initialValue, updatedValue);
+        return { ...entry, children };
       }
       const state = computeState(initialValue, updatedValue);
       const value = computeValue(state, initialValue, updatedValue);
