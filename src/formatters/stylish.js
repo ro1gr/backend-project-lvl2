@@ -40,7 +40,7 @@ export default (diff) => {
         }
         return `${appendSign(currentIndentation, entryState)}${entryKey}: ${iter(entryValue[entryState], depth + 1)}`;
       })
-        .map((line) => line.trimEnd());
+        // .map((line) => line.trimEnd());
 
       return [
         '{',
