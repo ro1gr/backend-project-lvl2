@@ -6,33 +6,31 @@ import genDiff from '../index.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const getFixturePath = (filename) => join(__dirname, '..', '__fixtures__', filename);
+const readFixture = (fixture) => readFileSync(getFixturePath(fixture), 'utf-8');
 
-const stylishExamplePath = getFixturePath('diffs/stylish-diff.txt');
-const plainExamplePath = getFixturePath('diffs/plain-diff.txt');
-const jsonExamplePath = getFixturePath('diffs/json-diff.txt');
-const stylishExample = readFileSync(stylishExamplePath, 'utf-8');
-const plainExample = readFileSync(plainExamplePath, 'utf-8');
-const jsonExample = readFileSync(jsonExamplePath, 'utf-8');
+const expectedStylishResult = readFixture('stylish-diff.txt');
+const expectedPlainResult = readFixture('plain-diff.txt');
+const expectedJsonResult = readFixture('json-diff.txt');
 
-const runTests = (initialData, updatedData) => {
+const runTests = (data1, data2) => {
   const cases = [
-    ['stylish', stylishExample],
-    ['plain', plainExample],
-    ['json', jsonExample],
+    ['stylish', expectedStylishResult],
+    ['plain', expectedPlainResult],
+    ['json', expectedJsonResult],
   ];
   test.each(cases)('%s output', (format, example) => {
-    expect(genDiff(initialData, updatedData, format)).toBe(example);
+    expect(genDiff(data1, data2, format)).toBe(example);
   });
 };
 
 describe('should work with JSON', () => {
-  const initialData = getFixturePath('data/deep1.json');
-  const updatedData = getFixturePath('data/deep2.json');
-  runTests(initialData, updatedData);
+  const data1 = getFixturePath('file1.json');
+  const data2 = getFixturePath('file2.json');
+  runTests(data1, data2);
 });
 
 describe('should work with YAML', () => {
-  const initialData = getFixturePath('data/deep1.yml');
-  const updatedData = getFixturePath('data/deep2.yaml');
-  runTests(initialData, updatedData);
+  const data1 = getFixturePath('file1.yml');
+  const data2 = getFixturePath('file2.yml');
+  runTests(data1, data2);
 });

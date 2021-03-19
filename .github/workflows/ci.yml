@@ -1,17 +1,20 @@
-name: codeclimate
+name: eslint
 
 on: [push]
 
 jobs:
-  codeclimatecheck:
+  eslint-check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
 
-      - name: Install Dependencies
-        run: npm install
+      - name: Install project
+        run: make install
 
-      - name: Make Test Coverage
+      - name: Run linter
+        run: make lint
+
+      - name: Run tests and publish code coverage
         uses: paambaati/codeclimate-action@v2.7.4
         # Add Code Climate secret key
         env:
