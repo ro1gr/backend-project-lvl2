@@ -1,21 +1,16 @@
 import _ from 'lodash';
 
 const fillEntry = (entry, value1, value2) => {
-  const data = {};
   if (_.isEqual(value1, value2)) {
-    data.state = 'unchanged';
-    data.value = { unchanged: value1 };
-  } else if (value2 === undefined) {
-    data.state = 'removed';
-    data.value = { removed: value1 };
-  } else if (value1 === undefined) {
-    data.state = 'added';
-    data.value = { added: value2 };
-  } else {
-    data.state = 'updated';
-    data.value = { removed: value1, added: value2 };
+    return { ...entry, state: 'unchanged', value: { unchanged: value1 } };
   }
-  return { ...entry, ...data };
+  if (value2 === undefined) {
+    return { ...entry, state: 'removed', value: { removed: value1 } };
+  }
+  if (value1 === undefined) {
+    return { ...entry, state: 'added', value: { added: value2 } };
+  }
+  return { ...entry, state: 'updated', value: { removed: value1, added: value2 } };
 };
 
 const buildDiff = (data1, data2) => {
