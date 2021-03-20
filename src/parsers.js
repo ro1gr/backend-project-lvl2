@@ -1,5 +1,4 @@
 import fs from 'fs';
-import path from 'path';
 import yaml from 'js-yaml';
 
 const readData = (input) => {
@@ -7,7 +6,7 @@ const readData = (input) => {
     return fs.readFileSync(input);
   }
   return input;
-}
+};
 
 export default (input) => {
   const data = readData(input);
