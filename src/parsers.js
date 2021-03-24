@@ -1,14 +1,12 @@
-import fs from 'fs';
 import yaml from 'js-yaml';
 
-const readData = (input) => {
-  if (fs.existsSync(input)) {
-    return fs.readFileSync(input);
+export default (string, format) => {
+  switch (format) {
+    case 'json':
+      return JSON.parse(string);
+    case 'yaml':
+      return yaml.load(string);
+    default:
+      throw new Error(`${format} isn't supported.`);
   }
-  return input;
-};
-
-export default (input) => {
-  const data = readData(input);
-  return yaml.load(data);
 };
