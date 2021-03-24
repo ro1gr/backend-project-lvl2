@@ -15,12 +15,6 @@ export default (diff) => {
   const indentation = {
     space: ' ',
     width: 4,
-    getCurrent(depth) {
-      return this.space.repeat(this.width * depth);
-    },
-    getBracket(depth) {
-      return this.space.repeat(this.width * depth - this.width);
-    },
   };
 
   const iterateObject = (currentValue, depth) => {
@@ -31,8 +25,9 @@ export default (diff) => {
       return currentValue.toString();
     }
 
-    const currentIndentation = indentation.getCurrent(depth);
-    const bracketIndentation = indentation.getBracket(depth);
+    const indentationSize = depth * indentation.width;
+    const currentIndentation = indentation.space.repeat(indentationSize);
+    const bracketIndentation = indentation.space.repeat(indentationSize - indentation.width);
 
     const lines = Object.entries(currentValue)
       .map(([key, val]) => `${currentIndentation}${key}: ${iterateObject(val, depth + 1)}`);
@@ -45,8 +40,9 @@ export default (diff) => {
   };
 
   const iterateArray = (currentValue, depth) => {
-    const currentIndentation = indentation.getCurrent(depth);
-    const bracketIndentation = indentation.getBracket(depth);
+    const indentationSize = depth * indentation.width;
+    const currentIndentation = indentation.space.repeat(indentationSize);
+    const bracketIndentation = indentation.space.repeat(indentationSize - indentation.width);
 
     const lines = currentValue.flatMap((entry) => {
       if (_.has(entry, 'children')) {
