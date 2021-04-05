@@ -1,7 +1,5 @@
-import _ from 'lodash';
-
 const formatValue = (value) => {
-  if (value === 'true' || value === 'false' || value === null) {
+  if (value === null) {
     return value;
   }
   if (typeof value === 'string') {
@@ -16,19 +14,19 @@ const formatValue = (value) => {
 export default (diff) => {
   const iter = (currentValue, acc) => {
     const lines = currentValue
-      .filter((entry) => entry.state !== 'unchanged')
       .flatMap((entry) => {
-        const newAcc = acc ? `${acc}.${entry.key}` : entry.key;
-        if (_.has(entry, 'children')) {
-          return `${iter(entry.children, newAcc)}`;
-        }
+        const newAcc = [...acc, entry.key];
         switch (entry.state) {
+          case 'complexValue':
+            return `${iter(entry.children, newAcc)}`;
           case 'removed':
-            return `Property '${newAcc}' was removed`;
+            return `Property '${newAcc.join('.')}' was removed`;
           case 'added':
-            return `Property '${newAcc}' was added with value: ${formatValue(entry.value2)}`;
+            return `Property '${newAcc.join('.')}' was added with value: ${formatValue(entry.value)}`;
           case 'updated':
-            return `Property '${newAcc}' was updated. From ${formatValue(entry.value1)} to ${formatValue(entry.value2)}`;
+            return `Property '${newAcc.join('.')}' was updated. From ${formatValue(entry.value1)} to ${formatValue(entry.value2)}`;
+          case 'unchanged':
+            return [];
           default:
             throw new Error(`${entry.state} is not expected. Plain formatter supports only removed, added and updated values.`);
         }
@@ -36,5 +34,5 @@ export default (diff) => {
     return lines.join('\n');
   };
 
-  return iter(diff, null);
+  return iter(diff, []);
 };

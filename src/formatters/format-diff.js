@@ -1,6 +1,5 @@
-import json from './formatters/json.js';
-import plain from './formatters/plain.js';
-import stylish from './formatters/stylish.js';
+import plain from './plain.js';
+import stylish from './stylish.js';
 
 export default (diff, format) => {
   switch (format) {
@@ -9,7 +8,7 @@ export default (diff, format) => {
     case 'plain':
       return plain(diff);
     case 'json':
-      return json(diff);
+      return JSON.stringify(diff);
     default:
       throw new Error(`${format} is not supported. Only stylish, plain and json formats are available.`);
   }

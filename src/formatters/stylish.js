@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 const appendSign = (indentation, state) => {
   switch (state) {
     case 'added':
@@ -45,23 +43,16 @@ export default (diff) => {
     const bracketIndentation = indentation.space.repeat(indentationSize - indentation.width);
 
     const lines = currentValue.flatMap((entry) => {
-      if (_.has(entry, 'children')) {
-        return `${currentIndentation}${entry.key}: ${iterateArray(entry.children, depth + 1)}`;
-      }
       switch (entry.state) {
-        case 'added':
-          return `${appendSign(currentIndentation, 'added')}${entry.key}: ${iterateObject(entry.value2, depth + 1)}`;
-        case 'removed':
-          return `${appendSign(currentIndentation, entry.state)}${entry.key}: ${iterateObject(entry.value1, depth + 1)}`;
+        case 'complexValue':
+          return `${currentIndentation}${entry.key}: ${iterateArray(entry.children, depth + 1)}`;
         case 'updated':
           return [
             `${appendSign(currentIndentation, 'removed')}${entry.key}: ${iterateObject(entry.value1, depth + 1)}`,
             `${appendSign(currentIndentation, 'added')}${entry.key}: ${iterateObject(entry.value2, depth + 1)}`,
           ];
-        case 'unchanged':
-          return `${appendSign(currentIndentation, entry.state)}${entry.key}: ${iterateObject(entry.value1, depth + 1)}`;
         default:
-          throw new Error(`Unknown state: ${entry.state}`);
+          return `${appendSign(currentIndentation, entry.state)}${entry.key}: ${iterateObject(entry.value, depth + 1)}`;
       }
     });
 
