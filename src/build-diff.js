@@ -9,19 +9,20 @@ const buildDiff = (data1, data2) => {
       return {
         key,
         state: 'added',
-        value2: data2[key],
+        value: data2[key],
       };
     }
     if (!_.has(data2, key)) {
       return {
         key,
         state: 'removed',
-        value1: data1[key],
+        value: data1[key],
       };
     }
     if (_.isPlainObject(data1[key]) && _.isPlainObject(data2[key])) {
       return {
         key,
+        state: 'complexValue',
         children: buildDiff(data1[key], data2[key]),
       };
     }
@@ -36,7 +37,7 @@ const buildDiff = (data1, data2) => {
     return {
       key,
       state: 'unchanged',
-      value1: data1[key],
+      value: data1[key],
     };
   });
 };
