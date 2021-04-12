@@ -26,10 +26,16 @@ describe.each(outputFormats)('should match expected %s diff', (outputFormat) => 
   });
 });
 
-describe('json diff should be valid', () => {
-  test('is valid', () => {
-    const path1 = getFixturePath('file1.json');
-    const path2 = getFixturePath('file2.json');
+describe('additional tests', () => {
+  const path1 = getFixturePath('file1.json');
+  const path2 = getFixturePath('file2.json');
+
+  test('stylish diff is returned by default', () => {
+    const diff = genDiff(path1, path2);
+    expect(diff).toBe(expected.stylish);
+  });
+
+  test('json diff is valid', () => {
     const jsonDiff = genDiff(path1, path2, 'json');
     expect(() => JSON.parse(jsonDiff)).not.toThrow();
   });
