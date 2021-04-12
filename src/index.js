@@ -2,15 +2,12 @@ import fs from 'fs';
 import path from 'path';
 import parseData from './parsers.js';
 import buildDiff from './build-diff.js';
-import formatDiff from './formatters/format-diff.js';
+import formatDiff from './formatters/index.js';
 
-const getFormat = (filepath) => {
-  const extension = path.extname(filepath);
-  const format = extension.slice(1);
-  return format;
-};
+const getFormat = (filepath) => path.extname(filepath).slice(1);
+
 const getData = (filepath) => {
-  const content = fs.readFileSync(filepath);
+  const content = fs.readFileSync(filepath, 'utf8');
   const format = getFormat(filepath);
   return parseData(content, format);
 };
