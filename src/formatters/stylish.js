@@ -1,13 +1,6 @@
-const space = ' ';
-const width = 4;
+const spacesCount = 4;
 
-const formatLineIndentation = (depth, sign = ' ') => space.repeat(depth * width).slice(2).concat(`${sign} `);
-const formatBracketIndentation = (depth) => space.repeat((depth - 1) * width);
-const formatLines = (depth, lines) => [
-  '{',
-  ...lines,
-  `${formatBracketIndentation(depth)}}`,
-].join('\n');
+const getIndent = (depth, marker = ' ') => ' '.repeat(depth * spacesCount - 2).concat(`${marker} `);
 const formatValue = (currentValue, depth) => {
   if (typeof currentValue !== 'object') {
     return currentValue;
@@ -17,9 +10,9 @@ const formatValue = (currentValue, depth) => {
   }
 
   const lines = Object.entries(currentValue)
-    .map(([key, val]) => `${formatLineIndentation(depth)}${key}: ${formatValue(val, depth + 1)}`);
+    .map(([key, val]) => `${getIndent(depth + 1)}${key}: ${formatValue(val, depth + 1)}`);
 
-  return formatLines(depth, lines);
+  return `{\n${lines.join('\n')}\n${' '.repeat((depth - 1) * spacesCount)}    }`;
 };
 
 export default (diff) => {
@@ -27,24 +20,24 @@ export default (diff) => {
     const lines = currentValue.flatMap((entry) => {
       switch (entry.state) {
         case 'complexValue':
-          return `${formatLineIndentation(depth)}${entry.key}: ${iterateArray(entry.children, depth + 1)}`;
+          return `${getIndent(depth)}${entry.key}: ${iterateArray(entry.children, depth + 1)}`;
         case 'removed':
-          return `${formatLineIndentation(depth, '-')}${entry.key}: ${formatValue(entry.value, depth + 1)}`;
+          return `${getIndent(depth, '-')}${entry.key}: ${formatValue(entry.value, depth)}`;
         case 'added':
-          return `${formatLineIndentation(depth, '+')}${entry.key}: ${formatValue(entry.value, depth + 1)}`;
+          return `${getIndent(depth, '+')}${entry.key}: ${formatValue(entry.value, depth)}`;
         case 'updated':
           return [
-            `${formatLineIndentation(depth, '-')}${entry.key}: ${formatValue(entry.value1, depth + 1)}`,
-            `${formatLineIndentation(depth, '+')}${entry.key}: ${formatValue(entry.value2, depth + 1)}`,
+            `${getIndent(depth, '-')}${entry.key}: ${formatValue(entry.value1, depth)}`,
+            `${getIndent(depth, '+')}${entry.key}: ${formatValue(entry.value2, depth)}`,
           ];
         case 'unchanged':
-          return `${formatLineIndentation(depth)}${entry.key}: ${formatValue(entry.value, depth + 1)}`;
+          return `${getIndent(depth)}${entry.key}: ${formatValue(entry.value, depth)}`;
         default:
           throw new Error(`${entry.state} is not expected.`);
       }
     });
 
-    return formatLines(depth, lines);
+    return `{\n${lines.join('\n')}\n${' '.repeat((depth - 1) * spacesCount)}}`;
   };
 
   return iterateArray(diff, 1);
