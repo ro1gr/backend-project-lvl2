@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import genDiff from '../index.js';
+import genDiff from '../src/index.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -15,27 +15,23 @@ const expected = {
   json: readFixture('json-diff.txt'),
 };
 
-const outputFormats = ['stylish', 'plain', 'json'];
+const outputFormats = Object.keys(expected);
+const inputFormats = ['json', 'yml'];
 
-describe.each(outputFormats)('should match expected %s diff', (outputFormat) => {
-  const inputFormats = ['json', 'yml'];
-  test.each(inputFormats)('%s data', (inputFormat) => {
-    const path1 = getFixturePath(`file1.${inputFormat}`);
-    const path2 = getFixturePath(`file2.${inputFormat}`);
+describe.each(inputFormats)('%s data', (inputFormat) => {
+  const path1 = getFixturePath(`file1.${inputFormat}`);
+  const path2 = getFixturePath(`file2.${inputFormat}`);
+
+  test.each(outputFormats)('%s diff should match expected', (outputFormat) => {
     expect(genDiff(path1, path2, outputFormat)).toBe(expected[outputFormat]);
   });
-});
 
-describe('additional tests', () => {
-  const path1 = getFixturePath('file1.json');
-  const path2 = getFixturePath('file2.json');
-
-  test('stylish diff is returned by default', () => {
+  test('stylish diff should be returned by default', () => {
     const diff = genDiff(path1, path2);
     expect(diff).toBe(expected.stylish);
   });
 
-  test('json diff is valid', () => {
+  test('json diff should be valid', () => {
     const jsonDiff = genDiff(path1, path2, 'json');
     expect(() => JSON.parse(jsonDiff)).not.toThrow();
   });
