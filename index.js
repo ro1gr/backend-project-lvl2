@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import parseData from './parsers.js';
-import buildDiff from './build-diff.js';
-import formatDiff from './formatters/index.js';
+import parseData from './src/parsers.js';
+import buildDiff from './src/build-diff.js';
+import formatDiff from './src/formatters/index.js';
 
 const getFormat = (filepath) => path.extname(filepath).slice(1);
 
