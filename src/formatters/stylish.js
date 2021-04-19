@@ -1,6 +1,11 @@
 const spacesCount = 4;
 
-const getIndent = (depth, marker = ' ') => ' '.repeat(depth * spacesCount - 2).concat(`${marker} `);
+const getIndent = (depth, marker = ' ') => {
+  if (depth === 0) {
+    return '';
+  }
+  return ' '.repeat(depth * spacesCount - 2).concat(`${marker} `);
+};
 const formatValue = (currentValue, depth) => {
   if (typeof currentValue !== 'object') {
     return currentValue;
@@ -12,7 +17,7 @@ const formatValue = (currentValue, depth) => {
   const lines = Object.entries(currentValue)
     .map(([key, val]) => `${getIndent(depth + 1)}${key}: ${formatValue(val, depth + 1)}`);
 
-  return `{\n${lines.join('\n')}\n${' '.repeat((depth - 1) * spacesCount)}    }`;
+  return `{\n${lines.join('\n')}\n${getIndent(depth)}}`;
 };
 
 export default (diff) => {
@@ -37,7 +42,7 @@ export default (diff) => {
       }
     });
 
-    return `{\n${lines.join('\n')}\n${' '.repeat((depth - 1) * spacesCount)}}`;
+    return `{\n${lines.join('\n')}\n${getIndent(depth - 1)}}`;
   };
 
   return iterateArray(diff, 1);
